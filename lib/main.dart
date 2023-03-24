@@ -24,7 +24,7 @@ class RadioApp extends StatefulWidget {
 
 class _RadioAppState extends State<RadioApp> {
   late AudioPlayer audioPlayer;
-  double volumeValue = 5;
+  double volumeValue = 0.5;
   bool isPlaying = false;
   bool isLoading = false;
   Station? currentStation;
@@ -105,6 +105,46 @@ class _RadioAppState extends State<RadioApp> {
       appBar: AppBar(
         title: const Text("Radio-Hub-TN"),
       ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              child: CircleAvatar(
+                radius: 30.0,
+                backgroundImage: AssetImage('assets/rad.png'),
+                backgroundColor: Colors.transparent,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+            ),
+            ListTile(
+              title: Text('Browse Stations'),
+              onTap: () {
+                // Perform sign out logic here
+              },
+            ),
+            ListTile(
+              title: Text('Request a Change'),
+              onTap: () {
+                /*
+            Navigator.pop(context); // Close the drawer
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ChangeStationForm()),
+            );*/
+              },
+            ),
+            ListTile(
+              title: Text('Sign Out'),
+              onTap: () {
+                // Perform sign out logic here
+              },
+            ),
+          ],
+        ),
+      ),
       body: isLoading
           ? Center(
               child: CircularProgressIndicator(),
@@ -153,7 +193,7 @@ class _RadioAppState extends State<RadioApp> {
                     value: volumeValue,
                     onChanged: (double value) => _setVolume(value),
                     min: 0.0,
-                    max: 10.0,
+                    max: 1.0,
                     divisions: 10,
                     label: 'Volume',
                   ),

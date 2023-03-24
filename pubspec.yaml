@@ -66,6 +66,7 @@ flutter:
       - assets/logos/ifm.png
       - assets/logos/mosaique.png
       - assets/logos/zitouna.png
+      - assets/rad.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
