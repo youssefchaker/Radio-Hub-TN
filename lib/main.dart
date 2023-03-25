@@ -4,6 +4,7 @@ import 'package:prj_mobile/screens/wrapper.dart';
 import 'package:prj_mobile/services/auth.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:prj_mobile/screens/radio.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +23,10 @@ class MainApp extends StatelessWidget {
         initialData: null,
         value: AuthService().user,
         child: MaterialApp(
+          initialRoute: '/',
+          routes: {
+            '/radio': (context) => RadioApp(),
+          },
           home: Wrapper(),
         ));
   }

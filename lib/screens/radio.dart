@@ -3,13 +3,15 @@ import 'package:just_audio/just_audio.dart';
 import 'dart:async';
 import 'package:prj_mobile/services/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:prj_mobile/screens/radiochange.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:flutter/services.dart';
 
 class Station {
   final String name;
   final String url;
+  final String video;
 
-  Station({required this.name, required this.url});
+  Station({required this.name, required this.url, required this.video});
 }
 
 class RadioApp extends StatefulWidget {
@@ -30,21 +32,27 @@ class _RadioAppState extends State<RadioApp> {
   List<Station> stations = [
     Station(
         name: "Mosaique",
-        url: "https://radio.mosaiquefm.net/mosalive?1677329762270"),
+        url: "https://radio.mosaiquefm.net/mosalive?1677329762270",
+        video: ""),
     Station(
         name: "Zitouna",
         url:
-            "https://stream.radiozitouna.tn/radio/8030/radio.mp3?1679503778784"),
+            "https://stream.radiozitouna.tn/radio/8030/radio.mp3?1679503778784",
+        video: ""),
     Station(
         name: "IFM",
-        url: "https://live.ifm.tn/radio/8000/ifmlive?1585267848&1677330133113"),
+        url: "https://live.ifm.tn/radio/8000/ifmlive?1585267848&1677330133113",
+        video: "https://www.youtube.com/watch?v=jWIt5lucbd8&ab_channel=IFM"),
     Station(
         name: "Express",
         url:
-            "https://expressfm.ice.infomaniak.ch/expressfm-64.mp3?1677330200699"),
+            "https://expressfm.ice.infomaniak.ch/expressfm-64.mp3?1677330200699",
+        video:
+            "https://www.youtube.com/watch?v=OCNREw67M4c&ab_channel=RadioExpressFM"),
     Station(
         name: "Diwan",
-        url: "https://streaming.diwanfm.net/stream?1677330272092"),
+        url: "https://streaming.diwanfm.net/stream?1677330272092",
+        video: ""),
   ];
   @override
   void initState() {
@@ -98,62 +106,73 @@ class _RadioAppState extends State<RadioApp> {
     });
   }
 
+  void _openVideo(Station station) {
+    if (station.video.isEmpty) {
+      return;
+    }
+    _setVolume(0.5);
+    _turnOff();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Stack(
+            children: [
+              YoutubePlayer(
+                controller: YoutubePlayerController(
+                  initialVideoId: YoutubePlayer.convertUrlToId(station.video)!,
+                  flags: YoutubePlayerFlags(
+                    autoPlay: true,
+                    mute: false,
+                    isLive: false,
+                    enableCaption: false,
+                    controlsVisibleAtStart: true,
+                  ),
+                ),
+                showVideoProgressIndicator: true,
+              ),
+              Positioned(
+                top: 0,
+                right: 0,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.close,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    SystemChrome.setEnabledSystemUIOverlays(
+                        SystemUiOverlay.values);
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          contentPadding: EdgeInsets.zero,
+          insetPadding: EdgeInsets.zero,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey,
       appBar: AppBar(
         title: const Text("RadioHubTN"),
+        actions: [
+          TextButton.icon(
+            onPressed: () async {
+              await _auth.signout();
+            },
+            icon: Icon(Icons.logout, color: Colors.white),
+            label: Text('Logout', style: TextStyle(color: Colors.white)),
+          ),
+        ],
         backgroundColor: Colors.blue,
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Column(
-                children: [
-                  CircleAvatar(
-                    radius: 50.0,
-                    backgroundImage: AssetImage('assets/rad.png'),
-                    backgroundColor: Colors.transparent,
-                  ),
-                  Text(
-                    "Welcome" +
-                        " " +
-                        _fbauth.currentUser!.email!.substring(
-                            0, _fbauth.currentUser!.email!.indexOf("@")),
-                    style: TextStyle(fontSize: 25),
-                  ),
-                ],
-              ),
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-            ),
-            ListTile(
-              title: Text('Browse Stations'),
-              tileColor: Colors.grey[300],
-              onTap: () {},
-            ),
-            /* ListTile(
-              title: Text('Request a station Change'),
-              onTap: () {
-                Navigator.pop(context); // Close the drawer
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ChangeStationForm()),
-                );
-              },
-            ),*/
-            ListTile(
-              title: Text('Sign Out'),
-              onTap: () async {
-                await _auth.signout();
-              },
-            ),
-          ],
-        ),
       ),
       body: isLoading
           ? Center(
@@ -188,6 +207,18 @@ class _RadioAppState extends State<RadioApp> {
                                   height: 50,
                                 ),
                                 title: Text(station.name),
+                                trailing: InkWell(
+                                  onTap: () {
+                                    // execute something when the video icon is tapped
+                                    _openVideo(station);
+                                  },
+                                  child: Tooltip(
+                                    message: 'Live Video Stream',
+                                    child: station.video != ""
+                                        ? Icon(Icons.videocam)
+                                        : null,
+                                  ),
+                                ),
                                 tileColor:
                                     isPlaying && currentStation == station
                                         ? Colors.grey[300]

@@ -23,25 +23,25 @@ class _SignInState extends State<SignIn> {
   String err = "";
   @override
   Widget build(BuildContext context) {
-    return loading
-        ? Center(
-            child: CircularProgressIndicator(),
-          )
-        : Scaffold(
-            backgroundColor: Colors.grey,
-            appBar: AppBar(
-              backgroundColor: Colors.blue,
-              elevation: 0.0,
-              title: Text('Sign in'),
-              actions: <Widget>[
-                ElevatedButton.icon(
-                  onPressed: () => widget.toggleview(),
-                  icon: Icon(Icons.person),
-                  label: Text("Register"),
-                ),
-              ],
+    return Scaffold(
+        backgroundColor: Colors.grey,
+        appBar: AppBar(
+          backgroundColor: Colors.blue,
+          elevation: 0.0,
+          title: Text('Sign in'),
+          actions: <Widget>[
+            ElevatedButton.icon(
+              onPressed: () => widget.toggleview(),
+              icon: Icon(Icons.person),
+              label: Text("Register"),
             ),
-            body: Container(
+          ],
+        ),
+        body: loading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Container(
                 padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
                 child: Form(
                   key: _formKey,
