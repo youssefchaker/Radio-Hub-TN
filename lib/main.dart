@@ -4,8 +4,6 @@ import 'package:prj_mobile/screens/wrapper.dart';
 import 'package:prj_mobile/services/auth.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:just_audio/just_audio.dart';
-import 'dart:async';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

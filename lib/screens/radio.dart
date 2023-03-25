@@ -136,7 +136,7 @@ class _RadioAppState extends State<RadioApp> {
               tileColor: Colors.grey[300],
               onTap: () {},
             ),
-            ListTile(
+            /* ListTile(
               title: Text('Request a station Change'),
               onTap: () {
                 Navigator.pop(context); // Close the drawer
@@ -145,7 +145,7 @@ class _RadioAppState extends State<RadioApp> {
                   MaterialPageRoute(builder: (context) => ChangeStationForm()),
                 );
               },
-            ),
+            ),*/
             ListTile(
               title: Text('Sign Out'),
               onTap: () async {
