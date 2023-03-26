@@ -8,8 +8,8 @@ import 'package:flutter/services.dart';
 
 class Station {
   final String name;
-  final String url;
-  final String video;
+  final String url;//the url used for audio streaming
+  final String video;//the url used for video streaming
 
   Station({required this.name, required this.url, required this.video});
 }
@@ -22,13 +22,14 @@ class RadioApp extends StatefulWidget {
 }
 
 class _RadioAppState extends State<RadioApp> {
-  final FirebaseAuth _fbauth = FirebaseAuth.instance;
   final AuthService _auth = AuthService();
-  late AudioPlayer audioPlayer;
+
+  late AudioPlayer audioPlayer;//responsable for playing the audio streaming 
   double volumeValue = 0.5;
-  bool isPlaying = false;
-  bool isLoading = false;
-  Station? currentStation;
+  bool isPlaying = false;//check if there is a station playing 
+  bool isLoading = false;//check if there is a station loading
+  Station? currentStation;//the station playing at the moment
+
   List<Station> stations = [
     Station(
         name: "Mosaique",
@@ -54,6 +55,8 @@ class _RadioAppState extends State<RadioApp> {
         url: "https://streaming.diwanfm.net/stream?1677330272092",
         video: ""),
   ];
+
+  //initilizing the audio player and volume
   @override
   void initState() {
     super.initState();
@@ -61,12 +64,7 @@ class _RadioAppState extends State<RadioApp> {
     audioPlayer.setVolume(volumeValue);
   }
 
-  @override
-  void dispose() {
-    audioPlayer.dispose();
-    super.dispose();
-  }
-
+  //function fired when a station is selected which loads and plays the selected station
   void _play(Station station) async {
     if (audioPlayer.playing) {
       await audioPlayer.stop();
@@ -82,11 +80,13 @@ class _RadioAppState extends State<RadioApp> {
     });
     Timer(Duration(seconds: 3), () {
       setState(() {
-        isLoading = false; // set isLoading to false to hide the spinner
+        isLoading = false; 
       });
     });
   }
 
+
+  //function used to turn off any station playing
   void _turnOff() async {
     if (audioPlayer.playing) {
       await audioPlayer.stop();
@@ -99,6 +99,7 @@ class _RadioAppState extends State<RadioApp> {
     });
   }
 
+  //function used to change the volume of the currently playing station
   void _setVolume(double value) {
     setState(() {
       volumeValue = value;
@@ -106,6 +107,8 @@ class _RadioAppState extends State<RadioApp> {
     });
   }
 
+
+  //function used to open video streaming for a specific station that creates a window playing the youtube stream
   void _openVideo(Station station) {
     if (station.video.isEmpty) {
       return;
@@ -163,6 +166,7 @@ class _RadioAppState extends State<RadioApp> {
       backgroundColor: Colors.grey,
       appBar: AppBar(
         title: const Text("RadioHubTN"),
+        //button for the user to logout
         actions: [
           TextButton.icon(
             onPressed: () async {
@@ -174,10 +178,12 @@ class _RadioAppState extends State<RadioApp> {
         ],
         backgroundColor: Colors.blue,
       ),
+      //check if the page is loading if so display the loading spinner
       body: isLoading
           ? Center(
               child: CircularProgressIndicator(),
             )
+            //display the currently playing station's logo as background pic
           : Container(
               decoration: BoxDecoration(
                 image: currentStation != null
@@ -190,6 +196,7 @@ class _RadioAppState extends State<RadioApp> {
                       )
                     : null,
               ),
+              //display all the stations
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -230,6 +237,7 @@ class _RadioAppState extends State<RadioApp> {
                       },
                     ),
                   ),
+                  //option to change the volume
                   Slider(
                     value: volumeValue,
                     onChanged: (double value) => _setVolume(value),
@@ -241,6 +249,7 @@ class _RadioAppState extends State<RadioApp> {
                   SizedBox(
                     height: 20,
                   ),
+                  //option to to turn off the stations
                   ElevatedButton(
                     child: Text("Turn Off"),
                     onPressed: () => _turnOff(),

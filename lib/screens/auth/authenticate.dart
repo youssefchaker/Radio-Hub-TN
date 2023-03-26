@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:prj_mobile/screens/auth/register.dart';
 import 'package:prj_mobile/screens/auth/sign_in.dart';
 
-//either show signin or register on app bar button click
+//this is the widget that decides if the user already has an account or not
 class Authenticate extends StatefulWidget {
 
   @override

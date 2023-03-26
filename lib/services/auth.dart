@@ -16,18 +16,6 @@ class AuthService {
         .map((User? user) => _userFromFirebaseUser(user!));
   }
 
-  //sign in anon
-
-  Future signinAnon() async {
-    try {
-      UserCredential result = await _auth.signInAnonymously();
-      User user = result.user as User;
-      return _userFromFirebaseUser(user);
-    } catch (e) {
-      e.toString();
-      return null;
-    }
-  }
 
   //sign in email&pass
 

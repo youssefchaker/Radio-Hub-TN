@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:prj_mobile/shared/constants.dart';
 
 class Register extends StatefulWidget {
-  //used for switing between register nad signin
   final Function toggleview;
 
   Register({required this.toggleview});
@@ -12,12 +11,11 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-  //setup firebase auth service
   final AuthService _auth = AuthService();
-  //give the form a key to use for valiadation
+
+  //form info
   final _formkey = GlobalKey<FormState>();
 
-  // text field state
   String email = '';
   String password = '';
   String err = '';
@@ -41,12 +39,14 @@ class _RegisterState extends State<Register> {
           ),
         ],
       ),
+      //check if the page is loading or not if so display the loading screen
       body: loading
           ? Center(
               child: CircularProgressIndicator(),
             )
           : Container(
               padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+              //form and form validation section
               child: Form(
                 key: _formkey,
                 child: Column(
@@ -76,7 +76,6 @@ class _RegisterState extends State<Register> {
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.pink[400],
-                          //onPrimary: Colors.black,
                         ),
                         child: Text(
                           'Register',

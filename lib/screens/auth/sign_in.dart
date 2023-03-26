@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:prj_mobile/shared/constants.dart';
 
 class SignIn extends StatefulWidget {
-  //used for switing between register nad signin
   final Function toggleview;
 
   SignIn({required this.toggleview});
@@ -16,7 +15,7 @@ class _SignInState extends State<SignIn> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
-  // text field state
+  //form info
   String email = '';
   String password = '';
   bool loading = false;
@@ -37,12 +36,14 @@ class _SignInState extends State<SignIn> {
             ),
           ],
         ),
+        //check if the page is loading or not if so display the loading screen
         body: loading
             ? Center(
                 child: CircularProgressIndicator(),
               )
             : Container(
                 padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+                 //form and form validation section
                 child: Form(
                   key: _formKey,
                   child: Column(
