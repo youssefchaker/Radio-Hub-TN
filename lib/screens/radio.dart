@@ -8,8 +8,8 @@ import 'package:flutter/services.dart';
 
 class Station {
   final String name;
-  final String url;//the url used for audio streaming
-  final String video;//the url used for video streaming
+  final String url; //the url used for audio streaming
+  final String video; //the url used for video streaming
 
   Station({required this.name, required this.url, required this.video});
 }
@@ -24,11 +24,11 @@ class RadioApp extends StatefulWidget {
 class _RadioAppState extends State<RadioApp> {
   final AuthService _auth = AuthService();
 
-  late AudioPlayer audioPlayer;//responsable for playing the audio streaming 
+  late AudioPlayer audioPlayer; //responsable for playing the audio streaming
   double volumeValue = 0.5;
-  bool isPlaying = false;//check if there is a station playing 
-  bool isLoading = false;//check if there is a station loading
-  Station? currentStation;//the station playing at the moment
+  bool isPlaying = false; //check if there is a station playing
+  bool isLoading = false; //check if there is a station loading
+  Station? currentStation; //the station playing at the moment
 
   List<Station> stations = [
     Station(
@@ -43,13 +43,13 @@ class _RadioAppState extends State<RadioApp> {
     Station(
         name: "IFM",
         url: "https://live.ifm.tn/radio/8000/ifmlive?1585267848&1677330133113",
-        video: "https://www.youtube.com/watch?v=jWIt5lucbd8&ab_channel=IFM"),
+        video: "https://www.youtube.com/watch?v=RpJuA6Fr8zo&ab_channel=IFM"),
     Station(
         name: "Express",
         url:
             "https://expressfm.ice.infomaniak.ch/expressfm-64.mp3?1677330200699",
         video:
-            "https://www.youtube.com/watch?v=OCNREw67M4c&ab_channel=RadioExpressFM"),
+            "https://www.youtube.com/watch?v=NHBqTnB-sYQ&ab_channel=RadioExpressFM"),
     Station(
         name: "Diwan",
         url: "https://streaming.diwanfm.net/stream?1677330272092",
@@ -80,11 +80,10 @@ class _RadioAppState extends State<RadioApp> {
     });
     Timer(Duration(seconds: 3), () {
       setState(() {
-        isLoading = false; 
+        isLoading = false;
       });
     });
   }
-
 
   //function used to turn off any station playing
   void _turnOff() async {
@@ -106,7 +105,6 @@ class _RadioAppState extends State<RadioApp> {
       audioPlayer.setVolume(volumeValue);
     });
   }
-
 
   //function used to open video streaming for a specific station that creates a window playing the youtube stream
   void _openVideo(Station station) {
@@ -183,7 +181,7 @@ class _RadioAppState extends State<RadioApp> {
           ? Center(
               child: CircularProgressIndicator(),
             )
-            //display the currently playing station's logo as background pic
+          //display the currently playing station's logo as background pic
           : Container(
               decoration: BoxDecoration(
                 image: currentStation != null
@@ -200,6 +198,16 @@ class _RadioAppState extends State<RadioApp> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  const Text(
+                    "Select one of the stations for audio streaming and click on the video icon for video streaming",
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                      letterSpacing: 1.2,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                   Expanded(
                     child: ListView.builder(
                       itemCount: stations.length,
@@ -237,6 +245,16 @@ class _RadioAppState extends State<RadioApp> {
                       },
                     ),
                   ),
+                  const Text(
+                    "Volume Level",
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                      letterSpacing: 1.2,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                   //option to change the volume
                   Slider(
                     value: volumeValue,
@@ -246,12 +264,9 @@ class _RadioAppState extends State<RadioApp> {
                     divisions: 10,
                     label: 'Volume',
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
                   //option to to turn off the stations
                   ElevatedButton(
-                    child: Text("Turn Off"),
+                    child: Text("Turn Off Stations"),
                     onPressed: () => _turnOff(),
                   ),
                   SizedBox(
