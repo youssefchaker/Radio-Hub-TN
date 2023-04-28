@@ -24,9 +24,9 @@ class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey,
+      backgroundColor: Colors.grey[800],
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.blueGrey[800],
         elevation: 0.0,
         title: Text('Register'),
         actions: <Widget>[
@@ -35,6 +35,10 @@ class _RegisterState extends State<Register> {
               widget.toggleview();
             },
             icon: Icon(Icons.person),
+            style: ButtonStyle(
+              backgroundColor:
+                  MaterialStateProperty.all<Color>(Colors.blueGrey[800]!),
+            ),
             label: Text("Signin"),
           ),
         ],
@@ -74,9 +78,7 @@ class _RegisterState extends State<Register> {
                     ),
                     SizedBox(height: 20.0),
                     ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.pink[400],
-                        ),
+                        style: ElevatedButton.styleFrom(),
                         child: Text(
                           'Register',
                           style: TextStyle(color: Colors.white),

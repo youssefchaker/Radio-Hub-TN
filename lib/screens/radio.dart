@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'dart:async';
@@ -10,8 +14,13 @@ class Station {
   final String name;
   final String url; //the url used for audio streaming
   final String video; //the url used for video streaming
+  final String logo; //the radio logo link
 
-  Station({required this.name, required this.url, required this.video});
+  Station(
+      {required this.name,
+      required this.url,
+      required this.video,
+      required this.logo});
 }
 
 class RadioApp extends StatefulWidget {
@@ -29,32 +38,9 @@ class _RadioAppState extends State<RadioApp> {
   bool isPlaying = false; //check if there is a station playing
   bool isLoading = false; //check if there is a station loading
   Station? currentStation; //the station playing at the moment
+  bool dbloading = true;
 
-  List<Station> stations = [
-    Station(
-        name: "Mosaique",
-        url: "https://radio.mosaiquefm.net/mosalive?1677329762270",
-        video: ""),
-    Station(
-        name: "Zitouna",
-        url:
-            "https://stream.radiozitouna.tn/radio/8030/radio.mp3?1679503778784",
-        video: ""),
-    Station(
-        name: "IFM",
-        url: "https://live.ifm.tn/radio/8000/ifmlive?1585267848&1677330133113",
-        video: "https://www.youtube.com/watch?v=RpJuA6Fr8zo&ab_channel=IFM"),
-    Station(
-        name: "Express",
-        url:
-            "https://expressfm.ice.infomaniak.ch/expressfm-64.mp3?1677330200699",
-        video:
-            "https://www.youtube.com/watch?v=NHBqTnB-sYQ&ab_channel=RadioExpressFM"),
-    Station(
-        name: "Diwan",
-        url: "https://streaming.diwanfm.net/stream?1677330272092",
-        video: ""),
-  ];
+  List<Station> stations = [];
 
   //initilizing the audio player and volume
   @override
@@ -62,6 +48,29 @@ class _RadioAppState extends State<RadioApp> {
     super.initState();
     audioPlayer = AudioPlayer();
     audioPlayer.setVolume(volumeValue);
+    getdata();
+  }
+
+  void getdata() async {
+    final FirebaseFirestore fs = FirebaseFirestore.instance;
+    final CollectionReference stationsCollection = fs.collection('stations');
+    final QuerySnapshot stationsSnapshot = await stationsCollection.get();
+    final List<Station> stationss = [];
+
+    stationsSnapshot.docs.forEach((doc) {
+      final String name = doc.id;
+      final String url = doc.get('url');
+      final String video = doc.get('video');
+      final String logo = doc.get('logo');
+
+      final Station station =
+          Station(name: name, url: url, video: video, logo: logo);
+      stationss.add(station);
+    });
+    setState(() {
+      stations = stationss;
+      dbloading = false;
+    });
   }
 
   //function fired when a station is selected which loads and plays the selected station
@@ -160,8 +169,9 @@ class _RadioAppState extends State<RadioApp> {
 
   @override
   Widget build(BuildContext context) {
+    bool test = dbloading || isLoading;
     return Scaffold(
-      backgroundColor: Colors.grey,
+      backgroundColor: Colors.grey[800],
       appBar: AppBar(
         title: const Text("RadioHubTN"),
         //button for the user to logout
@@ -174,10 +184,10 @@ class _RadioAppState extends State<RadioApp> {
             label: Text('Logout', style: TextStyle(color: Colors.white)),
           ),
         ],
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.blueGrey[800],
       ),
       //check if the page is loading if so display the loading spinner
-      body: isLoading
+      body: test
           ? Center(
               child: CircularProgressIndicator(),
             )
@@ -199,11 +209,11 @@ class _RadioAppState extends State<RadioApp> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const Text(
-                    "Select one of the stations for audio streaming and click on the video icon for video streaming",
+                    "Click on one of the stations to listen to that radio station and click on the video icon for a station to watch it's corresponding live stream",
                     style: TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: Colors.white,
                       letterSpacing: 1.2,
                     ),
                     textAlign: TextAlign.center,
@@ -216,12 +226,15 @@ class _RadioAppState extends State<RadioApp> {
                         return Column(
                           children: [
                             ListTile(
-                                leading: Image.asset(
-                                  'assets/logos/${station.name.toLowerCase()}.png',
+                                leading: Image.network(
+                                  station.logo,
                                   width: 50,
                                   height: 50,
                                 ),
-                                title: Text(station.name),
+                                title: Text(
+                                  station.name,
+                                  style: TextStyle(color: Colors.white),
+                                ),
                                 trailing: InkWell(
                                   onTap: () {
                                     // execute something when the video icon is tapped
@@ -230,15 +243,26 @@ class _RadioAppState extends State<RadioApp> {
                                   child: Tooltip(
                                     message: 'Live Video Stream',
                                     child: station.video != ""
-                                        ? Icon(Icons.videocam)
+                                        ? Icon(
+                                            Icons.videocam,
+                                            color: Colors.white,
+                                          )
                                         : null,
                                   ),
                                 ),
                                 tileColor:
                                     isPlaying && currentStation == station
-                                        ? Colors.grey[300]
+                                        ? Colors.blueGrey[800]
                                         : null,
-                                onTap: () => {_play(station)}),
+                                onTap: () => {
+                                      _play(station),
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                            content: Text(currentStation!.name +
+                                                "played successfully")),
+                                      )
+                                    }),
                             Divider(),
                           ],
                         );
@@ -250,7 +274,7 @@ class _RadioAppState extends State<RadioApp> {
                     style: TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: Colors.white,
                       letterSpacing: 1.2,
                     ),
                     textAlign: TextAlign.center,
@@ -267,7 +291,14 @@ class _RadioAppState extends State<RadioApp> {
                   //option to to turn off the stations
                   ElevatedButton(
                     child: Text("Turn Off Stations"),
-                    onPressed: () => _turnOff(),
+                    onPressed: () {
+                      _turnOff();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text(
+                                currentStation!.name + "stoped successfully")),
+                      );
+                    },
                   ),
                   SizedBox(
                     height: 20,
