@@ -44,6 +44,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                   controller: _emailController,
                   decoration: textInputDecoration.copyWith(hintText: 'Email'),
                   validator: (value) {
+                    //check if inputed email is empty
                     if (value!.isEmpty) {
                       return 'Please enter your email.';
                     }

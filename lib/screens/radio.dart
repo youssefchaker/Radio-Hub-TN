@@ -38,11 +38,11 @@ class _RadioAppState extends State<RadioApp> {
   bool isPlaying = false; //check if there is a station playing
   bool isLoading = false; //check if there is a station loading
   Station? currentStation; //the station playing at the moment
-  bool dbloading = true;
+  bool dbloading = true; //check if the data is still loading from the DB
 
   List<Station> stations = [];
 
-  //initilizing the audio player and volume
+  //initilizing the audio player and volume and retreiving the stations from DB
   @override
   void initState() {
     super.initState();
@@ -51,6 +51,7 @@ class _RadioAppState extends State<RadioApp> {
     getdata();
   }
 
+//method responsable for getting the stations from firebase
   void getdata() async {
     final FirebaseFirestore fs = FirebaseFirestore.instance;
     final CollectionReference stationsCollection = fs.collection('stations');
@@ -197,8 +198,8 @@ class _RadioAppState extends State<RadioApp> {
                 image: currentStation != null
                     ? DecorationImage(
                         opacity: 0.1,
-                        image: AssetImage(
-                          'assets/logos/${currentStation!.name.toLowerCase()}.png',
+                        image: NetworkImage(
+                          currentStation!.logo,
                         ),
                         fit: BoxFit.contain,
                       )
@@ -209,7 +210,7 @@ class _RadioAppState extends State<RadioApp> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const Text(
-                    "Click on one of the stations to listen to that radio station and click on the video icon for a station to watch it's corresponding live stream",
+                    "Choose one of the stations by tapping it or tap the video icon for a station to watch it's live stream",
                     style: TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold,
@@ -246,6 +247,7 @@ class _RadioAppState extends State<RadioApp> {
                                         ? Icon(
                                             Icons.videocam,
                                             color: Colors.white,
+                                            size: 30,
                                           )
                                         : null,
                                   ),
@@ -259,8 +261,9 @@ class _RadioAppState extends State<RadioApp> {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         SnackBar(
-                                            content: Text(currentStation!.name +
-                                                "played successfully")),
+                                            content: Text(station.name +
+                                                " " +
+                                                "played successfully!")),
                                       )
                                     }),
                             Divider(),
@@ -293,11 +296,14 @@ class _RadioAppState extends State<RadioApp> {
                     child: Text("Turn Off Stations"),
                     onPressed: () {
                       _turnOff();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content: Text(
-                                currentStation!.name + "stoped successfully")),
-                      );
+                      currentStation != null
+                          ? ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text(currentStation!.name +
+                                      " " +
+                                      "stopped successfully!")),
+                            )
+                          : null;
                     },
                   ),
                   SizedBox(
