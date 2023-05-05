@@ -1,12 +1,8 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'dart:async';
 import 'package:prj_mobile/services/auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:flutter/services.dart';
 
@@ -135,8 +131,8 @@ class _RadioAppState extends State<RadioApp> {
                   flags: YoutubePlayerFlags(
                     autoPlay: true,
                     mute: false,
-                    isLive: false,
-                    enableCaption: false,
+                    isLive: true,
+                    enableCaption: true,
                     controlsVisibleAtStart: true,
                   ),
                 ),
@@ -174,7 +170,7 @@ class _RadioAppState extends State<RadioApp> {
     return Scaffold(
       backgroundColor: Colors.grey[800],
       appBar: AppBar(
-        title: const Text("RadioHubTN"),
+        title: const Text("Radio Hub TN"),
         //button for the user to logout
         actions: [
           TextButton.icon(

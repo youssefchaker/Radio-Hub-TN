@@ -98,7 +98,13 @@ class _RegisterState extends State<Register> {
                                 err = 'please supply a valid mail';
                               });
                             }
-                          } else {}
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text(
+                                        'Sucessfully Registered. Welcome')),
+                              );
+                          }
                         }),
                     SizedBox(
                       height: 12.0,

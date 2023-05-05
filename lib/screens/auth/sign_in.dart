@@ -93,6 +93,12 @@ class _SignInState extends State<SignIn> {
                                   err =
                                       'Could not sign in with those credentials';
                                 });
+                              }else{
+                                 ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text(
+                                          'Sucessefully Logged in. Welcome Back')),
+                                );
                               }
                             }
                           }),
